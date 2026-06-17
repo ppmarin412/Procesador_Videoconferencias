@@ -12,7 +12,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Faltan las credenciales de la API en el servidor.' }, { status: 500 });
     }
 
-    // Configuración del prompt para que devuelva el texto estructurado + las métricas en formato JSON limpio
+    // 1. Limpieza automática de la URL de la API para evitar rutas mal formadas
+    let cleanUrl = apiUrl.trim().replace(/\/+$/, '');
+    if (!cleanUrl.endsWith('/v1') && !cleanUrl.endsWith('/openai/v1')) {
+      cleanUrl = `${cleanUrl}/v1`;
+    }
+
+    // Configuración del prompt para que devuelva el texto structured + las métricas en formato JSON limpio
     const systemPrompt = `Eres un asistente ejecutivo de alta dirección. 
 Procesa la siguiente transcripción de reunión y genera un informe estructurado elegantemente en idioma: ${targetLanguage}.
 Estructura solicitada: ${summaryType}.
@@ -30,15 +36,15 @@ IMPORTANTE: Al final de tu respuesta, debes añadir OBLIGATORIAMENTE un bloque J
 [[STATS_END]]
 Analiza el texto bruto para estimar la duración y calcular los porcentajes reales de intervención basándote en lo que habla cada participante de la transcripción.`;
 
-    // Realizamos la llamada a Groq / Qwen
-    const response = await fetch(`${apiUrl}/chat/completions`, {
+    // 2. Realizamos la llamada robusta a Groq / Qwen utilizando la URL limpia
+    const response = await fetch(`${cleanUrl}/chat/completions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
+        'Authorization': `Bearer ${apiKey.trim()}` // Limpieza de espacios en blanco en la Key
       },
       body: JSON.stringify({
-        model: 'qwen-2.5-coder-32b', // Asegúrate de que este es el modelo que tienes habilitado en tu cuenta de Groq
+        model: 'qwen-2.5-coder-32b', // ID Oficial y activo en el catálogo de Groq
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: `Reunión: ${meetingName}\nFecha: ${date}\n\nTranscripción:\n${transcript}` }
@@ -68,7 +74,7 @@ Analiza el texto bruto para estimar la duración y calcular los porcentajes real
         const parsedStats = JSON.parse(statsPart);
         
         stats = {
-          duration: parsedStats.duration ? `${parsedStats.duration}` : '10 min',
+          duration: parsedStats.duration ? `${parsedStats.duration} min` : '10 min',
           speakers: parsedStats.speakers || []
         };
       } catch (e) {
