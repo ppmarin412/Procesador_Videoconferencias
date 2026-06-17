@@ -35,7 +35,7 @@ IMPORTANTE: Al final de tu respuesta, debes añadir OBLIGATORIAMENTE un bloque J
 [[STATS_END]]
 Analiza el texto bruto para estimar la duración y calcular los porcentajes reales de intervención basándote en lo que habla cada participante de la transcripción.`;
 
-    // Llamada con el modelo ultra-estable y disponible de Groq
+    // Llamada con el modelo ultra-estable y disponible de GEMINI
     const response = await fetch(`${cleanUrl}/chat/completions`, {
       method: 'POST',
       headers: {
@@ -43,7 +43,7 @@ Analiza el texto bruto para estimar la duración y calcular los porcentajes real
         'Authorization': `Bearer ${apiKey.trim()}`
       },
       body: JSON.stringify({
-        model: 'gemini-2.5-flash', // El modelo de producción más compatible y con mayor límite en Google AI Studio
+        model: 'gemini-2.5-flash', // El modelo de producción más compatible y con mayor límite en GEMINI
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: `Reunión: ${meetingName}\nFecha: ${date}\n\nTranscripción:\n${transcript}` }
@@ -55,15 +55,15 @@ Analiza el texto bruto para estimar la duración y calcular los porcentajes real
 //    if (!response.ok) {
 //      const errorData = await response.json().catch(() => ({}));
 //      const errorMessage = errorData?.error?.message || `Código de estado: ${response.status}`;
-//      console.error('Error directo de Groq:', errorMessage);
+//      console.error('Error directo de Gemini:', errorMessage);
 //      // Ahora la app te pintará en la alerta el motivo exacto que da Groq
-//      return NextResponse.json({ error: `Groq rechaza la petición: ${errorMessage}` }, { status: response.status });
+//      return NextResponse.json({ error: `Gemini rechaza la petición: ${errorMessage}` }, { status: response.status });
 //    }
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Respuesta de error bruta de Groq:', errorText);
-      return NextResponse.json({ error: `Groq responde: ${errorText.substring(0, 150)}` }, { status: response.status });
+      console.error('Respuesta de error bruta de Gemini:', errorText);
+      return NextResponse.json({ error: `Gemini responde: ${errorText.substring(0, 150)}` }, { status: response.status });
     }
 
     const data = await response.json();
