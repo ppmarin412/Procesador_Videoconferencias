@@ -71,79 +71,74 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans antialiased selection:bg-blue-100">
-      {/* HEADER DE ALTO CONTRASTE CON NUEVO LOGOTIPO */}
-      <header className="bg-white border-b-2 border-slate-900 sticky top-0 z-50 py-4 px-6 shadow-sm">
+    <div className="min-h-screen bg-neutral-50 text-neutral-800 font-sans antialiased selection:bg-slate-200">
+      {/* HEADER MINIMALISTA CON LOGO OPCIÓN 3 */}
+      <header className="bg-white border-b border-neutral-200 sticky top-0 z-50 py-4 px-6 shadow-sm">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            {/* LOGO OPCIÓN A: Bombilla + Ondas de Audio */}
-            <svg className="w-10 h-10 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5" />
-              <path d="M9 18h6" />
-              <path d="M10 22h4" />
-              <path d="M2 8h2" />
-              <path d="M20 8h2" />
-              <path d="M5 3l1.5 1.5" />
-              <path d="M17.5 4.5L19 3" />
+            {/* LOGO OPCIÓN 3: Escudo de Texto Estructurado + Rayo */}
+            <svg className="w-8 h-8 text-slate-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              <path d="M9 11h6" />
+              <path d="M9 15h4" />
+              <path d="M13 7l-2 4h4l-2 4" className="text-blue-600 stroke-[2.5]" />
             </svg>
             <div>
-              <h1 className="text-2xl font-black tracking-tight text-slate-900 uppercase">MinuteMind</h1>
-              <p className="text-xs font-bold text-blue-700 tracking-wider uppercase">Analista Editorial de Reuniones</p>
+              <h1 className="text-xl font-bold tracking-tight text-neutral-900">MinuteMind</h1>
+              <p className="text-[11px] text-neutral-500 font-medium">Análisis Editorial de Videoconferencias</p>
             </div>
           </div>
-          <div className="text-xs font-mono bg-slate-950 text-white px-3 py-1.5 rounded-md uppercase font-bold tracking-md shadow-sm">
-            Entorno de Alta Capacidad • Gemini Activo
+          <div className="text-[11px] font-mono bg-neutral-100 border border-neutral-200 text-neutral-700 px-3 py-1 rounded-md shadow-sm font-semibold">
+            Motor Gemini Conectado
           </div>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* COLUMNA IZQUIERDA: FORMULARIO */}
+        {/* COLUMNA IZQUIERDA: FORMULARIO Y RESULTADO */}
         <div className="lg:col-span-2 space-y-8">
-          <section className="bg-white rounded-xl border-2 border-slate-900 p-6 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)]">
-            <h2 className="text-xl font-extrabold text-slate-900 mb-6 flex items-center gap-2 uppercase tracking-wide border-b-2 border-slate-200 pb-2">
-              <FileText className="w-5 h-5 text-blue-600" /> Nueva Transcripción
+          <section className="bg-white rounded-xl border border-neutral-200 p-6 shadow-sm">
+            <h2 className="text-base font-bold text-neutral-900 mb-5 flex items-center gap-2 border-b border-neutral-100 pb-3">
+              <FileText className="w-4 h-4 text-neutral-500" /> Cargar Nueva Reunión
             </h2>
             
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-black uppercase text-slate-900 mb-1.5 tracking-wider">Título del Encuentro</label>
+                  <label className="block text-xs font-semibold text-neutral-700 mb-1.5">Título del Encuentro</label>
                   <input 
                     type="text" required value={title} onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Ej. Reunión Mensual FLORSANI"
-                    className="w-full px-4 py-3 bg-white border-2 border-slate-900 rounded-lg text-slate-900 font-medium placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                    placeholder="Ej. Análisis de Operaciones FLORSANI"
+                    className="w-full px-3.5 py-2.5 bg-neutral-50 border border-neutral-300 rounded-lg text-neutral-900 font-medium placeholder-neutral-400 focus:outline-none focus:border-neutral-500 focus:bg-white transition-all text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-black uppercase text-slate-900 mb-1.5 tracking-wider">Fecha del Informe</label>
+                  <label className="block text-xs font-semibold text-neutral-700 mb-1.5">Fecha del Informe</label>
                   <input 
                     type="date" required value={date} onChange={(e) => setDate(e.target.value)}
-                    className="w-full px-4 py-3 bg-white border-2 border-slate-900 rounded-lg text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                    className="w-full px-3.5 py-2.5 bg-neutral-50 border border-neutral-300 rounded-lg text-neutral-900 font-medium focus:outline-none focus:border-neutral-500 focus:bg-white transition-all text-sm"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-black uppercase text-slate-900 mb-1.5 tracking-wider">Cuerpo de la Transcripción (Texto Bruto)</label>
+                <label className="block text-xs font-semibold text-neutral-700 mb-1.5">Transcripción Completa (Texto Bruto)</label>
                 <textarea 
                   required value={text} onChange={(e) => setText(e.target.value)}
-                  placeholder="Pega aquí todo el texto copiado de la videoconferencia sin importar su longitud..."
-                  rows={12}
-                  className="w-full px-4 py-3 bg-white border-2 border-slate-900 rounded-lg text-slate-900 font-mono text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm resize-y"
+                  placeholder="Pega aquí el bloque de texto de la videoconferencia sin importar su duración..."
+                  rows={10}
+                  className="w-full px-3.5 py-2.5 bg-neutral-50 border border-neutral-300 rounded-lg text-neutral-900 font-mono text-xs placeholder-neutral-400 focus:outline-none focus:border-neutral-500 focus:bg-white transition-all resize-y leading-relaxed"
                 />
               </div>
 
               <button 
                 type="submit" disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black text-sm uppercase tracking-widest py-4 px-6 rounded-lg border-2 border-slate-900 transition-all flex items-center justify-center gap-2 shadow-[2px_2px_0px_0px_rgba(15,23,42,1)] active:translate-y-0.5 active:shadow-none disabled:opacity-50"
+                className="w-full bg-neutral-900 hover:bg-neutral-800 text-white font-bold text-sm py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm disabled:opacity-40"
               >
                 {loading ? (
-                  <>
-                    <span className="animate-pulse">Analizando Reunión Masiva...</span>
-                  </>
+                  <span className="animate-pulse">Estructurando datos con Gemini...</span>
                 ) : (
-                  <>Procesar con Inteligencia Artificial <ArrowRight className="w-4 h-4" /></>
+                  <>Procesar Transcripción <ArrowRight className="w-4 h-4" /></>
                 )}
               </button>
             </form>
@@ -151,70 +146,63 @@ export default function Home() {
 
           {/* MENSAJES DE ERROR */}
           {error && (
-            <div className="bg-red-50 border-2 border-red-900 text-red-950 p-4 rounded-xl flex items-start gap-3 shadow-sm">
-              <AlertCircle className="w-5 h-5 text-red-700 shrink-0 mt-0.5" />
+            <div className="bg-red-50 border border-red-200 text-red-900 p-4 rounded-xl flex items-start gap-3 shadow-sm">
+              <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
               <div>
-                <h4 className="font-extrabold uppercase text-xs tracking-wider text-red-900 mb-1">Error de Comunicación</h4>
-                <p className="text-sm font-mono leading-relaxed">{error}</p>
+                <h4 className="font-bold text-xs text-red-800 mb-0.5">Aviso del Servidor</h4>
+                <p className="text-xs font-mono leading-relaxed">{error}</p>
               </div>
             </div>
           )}
 
-          {/* PANEL DE RESULTADOS RE-DISEÑADO */}
+          {/* VISTA DEL INFORME PROCESADO */}
           {report && (
-            <article className="bg-white rounded-xl border-2 border-slate-900 p-6 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] space-y-8 animate-fadeIn">
-              <div className="border-b-2 border-slate-900 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <article className="bg-white rounded-xl border border-neutral-200 p-6 shadow-sm space-y-6 animate-fadeIn">
+              <div className="border-b border-neutral-200 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <span className="text-xs font-black uppercase text-blue-700 tracking-widest">Informe Generado</span>
-                  <h3 className="text-2xl font-black text-slate-900 mt-0.5">{report.title}</h3>
-                  <div className="flex items-center gap-4 text-xs font-bold text-slate-600 mt-2">
+                  <h3 className="text-xl font-bold text-neutral-900">{report.title}</h3>
+                  <div className="flex items-center gap-3 text-xs font-medium text-neutral-500 mt-1">
                     <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> {report.date}</span>
-                    <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> Documento Completo</span>
+                    <span className="w-1 h-1 bg-neutral-300 rounded-full" />
+                    <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> Transcripción Procesada</span>
                   </div>
                 </div>
               </div>
 
-              {/* RESUMEN EDITORIAL */}
-              <section className="space-y-3">
-                <h4 className="text-xs font-black uppercase tracking-wider text-slate-900 bg-slate-100 px-2.5 py-1 inline-block border border-slate-400 rounded">
-                  SÍNTESIS EJECUTIVA
-                </h4>
-                <p className="text-base text-slate-800 leading-relaxed font-normal whitespace-pre-line bg-slate-50 p-4 border border-slate-300 rounded-lg">
+              {/* SÍNTESIS EDITORIAL (CON ALTO CONTRASTE TIPOGRÁFICO) */}
+              <section className="space-y-2">
+                <h4 className="text-xs font-bold tracking-wider text-neutral-500 uppercase">Síntesis Ejecutiva</h4>
+                <p className="text-sm text-neutral-900 leading-relaxed font-normal whitespace-pre-line bg-neutral-50 border border-neutral-200 rounded-lg p-4">
                   {report.summary}
                 </p>
               </section>
 
-              {/* DOS COLUMNAS: INSIGHTS + GRÁFICO */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4 border-t border-slate-200">
-                {/* ACUERDOS ClAVE */}
-                <section className="space-y-3">
-                  <h4 className="text-xs font-black uppercase tracking-wider text-slate-900 bg-slate-100 px-2.5 py-1 inline-block border border-slate-400 rounded">
-                    PUNTOS CRÍTICOS Y ACUERDOS
-                  </h4>
-                  <ul className="space-y-2.5">
+              {/* GRID DETALLES */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-neutral-100">
+                {/* ACUERDOS CLAVE */}
+                <section className="space-y-2">
+                  <h4 className="text-xs font-bold tracking-wider text-neutral-500 uppercase">Puntos Críticos y Acuerdos</h4>
+                  <ul className="space-y-2">
                     {report.insights.map((insight, idx) => (
-                      <li key={idx} className="flex items-start gap-2.5 text-sm text-slate-800 font-medium leading-relaxed bg-white border border-slate-200 p-2.5 rounded-md shadow-sm">
-                        <span className="w-5 h-5 bg-blue-100 text-blue-800 border border-blue-300 font-bold text-xs rounded flex items-center justify-center shrink-0 mt-0.5">{idx + 1}</span>
-                        <span>{insight}</span>
+                      <li key={idx} className="flex items-start gap-2.5 text-sm text-neutral-900 bg-white border border-neutral-200 p-3 rounded-lg shadow-sm">
+                        <span className="font-bold text-xs text-neutral-400 mt-0.5">{idx + 1}.</span>
+                        <span className="font-medium">{insight}</span>
                       </li>
                     ))}
                   </ul>
                 </section>
 
-                {/* GRÁFICO DE DONUT DE ALTO CONTRASTE */}
-                <section className="space-y-3 flex flex-col">
-                  <h4 className="text-xs font-black uppercase tracking-wider text-slate-900 bg-slate-100 px-2.5 py-1 inline-block border border-slate-400 rounded self-start">
-                    MÉTRICA DE PARTICIPACIÓN
-                  </h4>
-                  
-                  <div className="flex-1 bg-slate-50 border border-slate-300 rounded-lg p-4 flex flex-col sm:flex-row items-center justify-center gap-6">
-                    {/* Gráfico Donut SVG */}
-                    <div className="relative w-32 h-32 shrink-0">
+                {/* GRÁFICO DE PARTICIPACIÓN */}
+                <section className="space-y-2">
+                  <h4 className="text-xs font-bold tracking-wider text-neutral-500 uppercase">Métrica de Participación</h4>
+                  <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4 flex flex-col sm:flex-row items-center justify-center gap-5">
+                    {/* Donut SVG */}
+                    <div className="relative w-28 h-28 shrink-0">
                       <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                        <circle cx="18" cy="18" r="15.915" fill="none" stroke="#e2e8f0" strokeWidth="3.5" />
+                        <circle cx="18" cy="18" r="15.915" fill="none" stroke="#e5e5e5" strokeWidth="3" />
                         {(() => {
                           let accumulated = 0;
-                          const colors = ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
+                          const colors = ['#0f172a', '#475569', '#94a3b8', '#cbd5e1', '#e2e8f0'];
                           return report.participation.map((p, i) => {
                             const strokeDasharray = `${p.percentage} ${100 - p.percentage}`;
                             const strokeDashoffset = 100 - accumulated;
@@ -222,30 +210,29 @@ export default function Home() {
                             return (
                               <circle 
                                 key={i} cx="18" cy="18" r="15.915" fill="none" 
-                                stroke={colors[i % colors.length]} strokeWidth="3.8" 
+                                stroke={colors[i % colors.length]} strokeWidth="3.2" 
                                 strokeDasharray={strokeDasharray} strokeDashoffset={strokeDashoffset} 
                               />
                             );
                           });
                         })()}
                       </svg>
-                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-transparent">
-                        <BarChart3 className="w-5 h-5 text-slate-700" />
-                        <span className="text-[10px] font-black uppercase text-slate-600 mt-0.5">Voz %</span>
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <BarChart3 className="w-4 h-4 text-neutral-500" />
                       </div>
                     </div>
 
-                    {/* Leyenda con textos oscuros */}
+                    {/* Leyenda minimalista */}
                     <div className="space-y-1.5 w-full">
                       {report.participation.map((p, i) => {
-                        const colors = ['bg-blue-600', 'bg-emerald-500', 'bg-amber-500', 'bg-red-500', 'bg-violet-500', 'bg-pink-500'];
+                        const colors = ['bg-slate-900', 'bg-slate-600', 'bg-slate-400', 'bg-slate-300', 'bg-slate-200'];
                         return (
-                          <div key={i} className="flex items-center justify-between text-xs border-b border-slate-200 pb-1 last:border-0">
-                            <div className="flex items-center gap-2 font-bold text-slate-800 truncate max-w-[120px]">
-                              <span className={`w-2.5 h-2.5 ${colors[i % colors.length]} rounded-full shrink-0`} />
+                          <div key={i} className="flex items-center justify-between text-xs border-b border-neutral-200 pb-1 last:border-0">
+                            <div className="flex items-center gap-2 font-semibold text-neutral-800 truncate max-w-[120px]">
+                              <span className={`w-2 h-2 ${colors[i % colors.length]} rounded-full shrink-0`} />
                               <span className="truncate">{p.name}</span>
                             </div>
-                            <span className="font-mono font-black text-slate-950">{p.percentage}%</span>
+                            <span className="font-mono font-bold text-neutral-900">{p.percentage}%</span>
                           </div>
                         );
                       })}
@@ -257,46 +244,44 @@ export default function Home() {
           )}
         </div>
 
-        {/* COLUMNA DERECHA: HISTORIAL DE ALTO CONTRASTE */}
+        {/* COLUMNA DERECHA: HISTORIAL */}
         <div className="space-y-6">
-          <section className="bg-white rounded-xl border-2 border-slate-900 p-5 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)]">
-            <h2 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-4 flex items-center justify-between border-b-2 border-slate-200 pb-2">
+          <section className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
+            <h2 className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-4 flex items-center justify-between border-b border-neutral-100 pb-2">
               <span>Historial Grabado</span>
-              <span className="bg-slate-950 text-white font-mono text-xs px-2 py-0.5 rounded-full font-bold">{history.length}</span>
+              <span className="bg-neutral-100 text-neutral-700 font-mono text-xs px-2 py-0.5 rounded-md font-semibold border border-neutral-200">{history.length}</span>
             </h2>
 
             {history.length === 0 ? (
-              <div className="text-center py-8 px-4 border-2 border-dashed border-slate-300 rounded-lg bg-slate-50">
-                <p className="text-sm font-bold text-slate-500 uppercase tracking-wide">Sin registros locales</p>
-                <p className="text-xs text-slate-400 mt-1">Los informes procesados se guardarán automáticamente aquí.</p>
+              <div className="text-center py-8 px-4 border border-dashed border-neutral-200 rounded-lg bg-neutral-50">
+                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Historial vacío</p>
               </div>
             ) : (
-              <div className="space-y-4 max-h-[640px] overflow-y-auto pr-1">
+              <div className="space-y-3 max-h-[580px] overflow-y-auto pr-1">
                 {history.map((h) => (
                   <div 
                     key={h.id} onClick={() => setReport(h)}
-                    className={`p-3.5 rounded-lg border-2 text-left transition-all cursor-pointer bg-white group ${
+                    className={`p-3.5 rounded-lg border text-left transition-all cursor-pointer bg-white group ${
                       report?.id === h.id 
-                        ? 'border-blue-600 ring-2 ring-blue-100 shadow-sm' 
-                        : 'border-slate-300 hover:border-slate-900 hover:shadow-md'
+                        ? 'border-neutral-900 ring-1 ring-neutral-900 shadow-sm' 
+                        : 'border-neutral-200 hover:border-neutral-400'
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <h3 className="font-extrabold text-sm text-slate-900 truncate group-hover:text-blue-700">{h.title}</h3>
-                      <span className="text-[10px] font-mono font-bold text-slate-500 whitespace-nowrap bg-slate-100 px-1.5 py-0.5 border border-slate-200 rounded">
+                      <h3 className="font-bold text-xs text-neutral-900 truncate group-hover:text-neutral-700">{h.title}</h3>
+                      <span className="text-[10px] font-mono font-semibold text-neutral-400 whitespace-nowrap bg-neutral-50 px-1.5 py-0.5 border border-neutral-200 rounded">
                         {h.date}
                       </span>
                     </div>
-                    <p className="text-xs font-medium text-slate-600 line-clamp-2 mt-1.5 leading-relaxed">
+                    <p className="text-[11px] font-medium text-neutral-500 line-clamp-2 mt-1.5 leading-relaxed">
                       {h.summary}
                     </p>
-                    <div className="flex items-center gap-2 mt-3 pt-2.5 border-t border-slate-100 justify-end">
+                    <div className="flex items-center gap-2 mt-2.5 pt-2 border-t border-neutral-100 justify-end">
                       <button 
-                        onClick={(e) => { e.stopPropagation(); alert('¡Próximamente disponible para configurar con tu Webhook!'); }}
-                        className="text-[11px] font-black uppercase text-slate-700 hover:text-blue-700 flex items-center gap-1 bg-slate-100 border border-slate-300 px-2 py-1 rounded transition-colors"
-                        title="Subir a Google Drive"
+                        onClick={(e) => { e.stopPropagation(); alert('¡Preparado para conectar con tu Webhook de Drive!'); }}
+                        className="text-[10px] font-bold uppercase text-neutral-500 hover:text-neutral-900 flex items-center gap-1 bg-neutral-50 border border-neutral-200 px-2 py-1 rounded transition-colors"
                       >
-                        <Cloud className="w-3 h-3" /> Drive
+                        <Cloud className="w-2.5 h-2.5" /> Subir a Drive
                       </button>
                     </div>
                   </div>
