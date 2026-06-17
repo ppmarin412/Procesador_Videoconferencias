@@ -12,13 +12,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Faltan las credenciales de la API en el servidor.' }, { status: 500 });
     }
 
-    // 1. Limpieza automática de la URL de la API para evitar rutas mal formadas
+    // Limpieza de URL
     let cleanUrl = apiUrl.trim().replace(/\/+$/, '');
     if (!cleanUrl.endsWith('/v1') && !cleanUrl.endsWith('/openai/v1')) {
       cleanUrl = `${cleanUrl}/v1`;
     }
 
-    // Configuración del prompt para que devuelva el texto structured + las métricas en formato JSON limpio
     const systemPrompt = `Eres un asistente ejecutivo de alta dirección. 
 Procesa la siguiente transcripción de reunión y genera un informe estructurado elegantemente en idioma: ${targetLanguage}.
 Estructura solicitada: ${summaryType}.
@@ -36,15 +35,15 @@ IMPORTANTE: Al final de tu respuesta, debes añadir OBLIGATORIAMENTE un bloque J
 [[STATS_END]]
 Analiza el texto bruto para estimar la duración y calcular los porcentajes reales de intervención basándote en lo que habla cada participante de la transcripción.`;
 
-    // 2. Realizamos la llamada robusta a Groq / Qwen utilizando la URL limpia
+    // Llamada con el modelo ultra-estable y disponible de Groq
     const response = await fetch(`${cleanUrl}/chat/completions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey.trim()}` // Limpieza de espacios en blanco en la Key
+        'Authorization': `Bearer ${apiKey.trim()}`
       },
       body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile', // ID Oficial y activo en el catálogo de Groq
+        model: 'llama-3.3-70b-specdec', // El modelo de producción más compatible y con mayor límite en Groq
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: `Reunión: ${meetingName}\nFecha: ${date}\n\nTranscripción:\n${transcript}` }
@@ -54,15 +53,16 @@ Analiza el texto bruto para estimar la duración y calcular los porcentajes real
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Error de Groq:', errorText);
-      return NextResponse.json({ error: `La IA ha respondido con un error externo.` }, { status: response.status });
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData?.error?.message || `Código de estado: ${response.status}`;
+      console.error('Error directo de Groq:', errorMessage);
+      // Ahora la app te pintará en la alerta el motivo exacto que da Groq
+      return NextResponse.json({ error: `Groq rechaza la petición: ${errorMessage}` }, { status: response.status });
     }
 
     const data = await response.json();
     const fullText = data.choices[0].message.content;
 
-    // Extracción limpia de las estadísticas del gráfico
     let resultText = fullText;
     let stats = { duration: '0 min', speakers: [] };
 
