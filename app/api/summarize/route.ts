@@ -43,7 +43,7 @@ Analiza el texto bruto para estimar la duración y calcular los porcentajes real
         'Authorization': `Bearer ${apiKey.trim()}`
       },
       body: JSON.stringify({
-        model: 'llama-3.1-8b-instant', // El modelo de producción más compatible y con mayor límite en Groq
+        model: 'gemini-2.5-flash', // El modelo de producción más compatible y con mayor límite en Google AI Studio
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: `Reunión: ${meetingName}\nFecha: ${date}\n\nTranscripción:\n${transcript}` }
