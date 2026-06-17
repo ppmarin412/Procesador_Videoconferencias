@@ -43,7 +43,7 @@ Analiza el texto bruto para estimar la duración y calcular los porcentajes real
         'Authorization': `Bearer ${apiKey.trim()}`
       },
       body: JSON.stringify({
-        model: 'llama-3.1-8b-instant', // El modelo de producción más compatible y con mayor límite en Groq
+        model: 'llama3-70b-8192', // El modelo de producción más compatible y con mayor límite en Groq
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: `Reunión: ${meetingName}\nFecha: ${date}\n\nTranscripción:\n${transcript}` }
@@ -52,12 +52,18 @@ Analiza el texto bruto para estimar la duración y calcular los porcentajes real
       })
     });
 
+//    if (!response.ok) {
+//      const errorData = await response.json().catch(() => ({}));
+//      const errorMessage = errorData?.error?.message || `Código de estado: ${response.status}`;
+//      console.error('Error directo de Groq:', errorMessage);
+//      // Ahora la app te pintará en la alerta el motivo exacto que da Groq
+//      return NextResponse.json({ error: `Groq rechaza la petición: ${errorMessage}` }, { status: response.status });
+//    }
+
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      const errorMessage = errorData?.error?.message || `Código de estado: ${response.status}`;
-      console.error('Error directo de Groq:', errorMessage);
-      // Ahora la app te pintará en la alerta el motivo exacto que da Groq
-      return NextResponse.json({ error: `Groq rechaza la petición: ${errorMessage}` }, { status: response.status });
+      const errorText = await response.text();
+      console.error('Respuesta de error bruta de Groq:', errorText);
+      return NextResponse.json({ error: `Groq responde: ${errorText.substring(0, 150)}` }, { status: response.status });
     }
 
     const data = await response.json();
