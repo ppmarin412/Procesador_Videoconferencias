@@ -43,7 +43,7 @@ Analiza el texto bruto para estimar la duración y calcular los porcentajes real
         'Authorization': `Bearer ${apiKey.trim()}`
       },
       body: JSON.stringify({
-        model: 'llama3-70b-8192', // El modelo de producción más compatible y con mayor límite en Groq
+        model: 'llama-3.3-70b-versatile', // El modelo de producción más compatible y con mayor límite en Groq
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: `Reunión: ${meetingName}\nFecha: ${date}\n\nTranscripción:\n${transcript}` }
