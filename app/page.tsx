@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { 
-  FileText, Calendar, Clock, BarChart3, ArrowRight, Cloud, 
-  AlertCircle, FileEdit, ListChecks, Target, Quote, Sparkles, 
-  Globe, Radio, Camera, Square, Send, Laptop, Chrome
+  FileText, Calendar, Cloud, AlertCircle, FileEdit, 
+  ListChecks, Target, Quote, Sparkles, Globe, 
+  Camera, Square, Send, Laptop, Chrome
 } from 'lucide-react';
 
 interface MeetingReport {
@@ -13,7 +13,6 @@ interface MeetingReport {
   date: string;
   summary: string;
   insights: string[];
-  participation: { name: string; percentage: number }[];
   type: string;
   language: string;
   aiTipsEnabled: boolean;
@@ -48,19 +47,25 @@ export default function Home() {
   useEffect(() => {
     const saved = localStorage.getItem('meeting_reports_history');
     if (saved) {
-      try { setHistory(JSON.parse(saved)); } catch (e) { console.error(e); }
+      try { 
+        setHistory(JSON.parse(saved)); 
+      } catch (e) { 
+        console.error(e); 
+      }
     }
   }, []);
 
   // Simulación de escucha local de la extensión (Captura nativa de subtítulos)
   useEffect(() => {
-    let interval: any;
+    let interval: ReturnType<typeof setInterval>;
     if (botState === 'capturing') {
       interval = setInterval(() => {
         setCapturedLines(prev => prev + Math.floor(Math.random() * 2) + 1);
       }, 2500);
     }
-    return () => clearInterval(interval);
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, [botState]);
 
   const handleSendBotData = () => {
@@ -98,7 +103,6 @@ export default function Home() {
         date,
         summary: data.summary || '',
         insights: data.insights || [],
-        participation: data.participation || [],
         type: summaryType,
         language: outputLanguage,
         aiTipsEnabled: aiTips,
@@ -118,7 +122,7 @@ export default function Home() {
       localStorage.setItem('meeting_reports_history', JSON.stringify(updatedHistory));
     } catch (err: any) {
       setError(err.message || 'Ocurrió un error inesperado');
-    } finally {
+    } finaly {
       setLoading(false);
     }
   };
@@ -189,7 +193,7 @@ export default function Home() {
                 <h3 className="text-xs font-bold text-[#5C5043] uppercase tracking-wider">🎙️ Minion Digital Local (Chrome Extension)</h3>
               </div>
               <span className="text-[10px] bg-[#FBF9F6] border border-[#C4B49F] text-[#7C6E5E] px-2.5 py-1 rounded-lg flex items-center gap-1 font-medium">
-                <Laptop className="w-3 h-3" /> Ejecución local en tu PC (100% Gratis)
+                <Laptop className="w-3 h-3" /> Execution local en tu PC (100% Gratis)
               </span>
             </div>
 
@@ -231,7 +235,7 @@ export default function Home() {
               {botState === 'stopped' && (
                 <button
                   type="button" onClick={handleSendBotData}
-                  className="w-full sm:w-auto ml-auto flex items-center justify-center gap-1.5 bg-[#A38A70] hover:bg-[#8C755E] text-white text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-md animate-bounce"
+                  className="w-full sm:w-auto ml-auto flex items-center justify-center gap-1.5 bg-[#A38A70] hover:bg-[#8C755E] text-white text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-md"
                 >
                   <Send className="w-3 h-3" /> 🚀 Enviar a mi App
                 </button>
@@ -399,7 +403,7 @@ export default function Home() {
                 </div>
               </section>
 
-              {/* BLOQUE DE CONSEJOS INTELIGENTES MAQUETADO LIMPIAMENTE */}
+              {/* BLOQUE DE CONSEJOS INTELIGENTES */}
               {report.aiTipsEnabled && report.aiTipsContent && (
                 <section className="bg-[#DFD8CD] border border-[#C4B49F] rounded-xl p-5 space-y-4 shadow-inner">
                   <div className="flex items-center gap-2 border-b border-[#C4B49F] pb-2">
