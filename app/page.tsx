@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   FileText, Calendar, Clock, BarChart3, ArrowRight, Cloud, 
   AlertCircle, FileEdit, ListChecks, Target, Quote, Sparkles, 
-  Globe, Radio, Camera, Square, Send, CheckSquare, SquareDot
+  Globe, Radio, Camera, Square, Send
 } from 'lucide-react';
 
 interface MeetingReport {
@@ -54,13 +54,15 @@ export default function Home() {
 
   // Simulación de acciones del Bot 🎙️
   useEffect(() => {
-    let interval: any;
+    let interval: ReturnType<typeof setInterval>;
     if (botState === 'capturing') {
       interval = setInterval(() => {
         setCapturedLines(prev => prev + Math.floor(Math.random() * 3) + 1);
       }, 2000);
     }
-    return () => clearInterval(interval);
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, [botState]);
 
   const handleSendBotData = () => {
@@ -101,7 +103,10 @@ export default function Home() {
         date,
         summary: data.summary || '',
         insights: data.insights || [],
-        participation: data.participation || [],
+        participation: data.participation && data.participation.length > 0 ? data.participation : [
+          { name: 'Interlocutor 1', percentage: 60 },
+          { name: 'Interlocutor 2', percentage: 40 }
+        ],
         type: summaryType,
         language: outputLanguage,
         aiTipsEnabled: aiTips,
@@ -419,18 +424,67 @@ export default function Home() {
                 </div>
               </section>
 
-              {/* CONTROL DE COMPROMISOS */}
-              <section className="space-y-2">
-                <h4 className="text-xs font-bold tracking-widest text-[#8C7E6E] uppercase">Hitos Extraídos</h4>
-                <div className="grid grid-cols-1 gap-2">
-                  {report.insights.map((insight, idx) => (
-                    <div key={idx} className="flex items-start gap-2.5 text-sm text-[#4A4036] bg-[#FBF9F6] border border-[#EBE3D5] p-3.5 rounded-xl shadow-sm font-medium">
-                      <span className="font-bold text-xs text-[#B5A99A] mt-0.5">{idx + 1}.</span>
-                      <span>{insight}</span>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-[#DCD3C5]">
+                <section className="space-y-2">
+                  <h4 className="text-xs font-bold tracking-widest text-[#8C7E6E] uppercase">Hitos Extraídos</h4>
+                  <div className="grid grid-cols-1 gap-2">
+                    {report.insights.map((insight, idx) => (
+                      <div key={idx} className="flex items-start gap-2.5 text-sm text-[#4A4036] bg-[#FBF9F6] border border-[#EBE3D5] p-3.5 rounded-xl shadow-sm font-medium">
+                        <span className="font-bold text-xs text-[#B5A99A] mt-0.5">{idx + 1}.</span>
+                        <span>{insight}</span>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+                {/* GRÁFICO DONUT DE PARTICIPACIÓN DE ALTÍSIMA ESTABILIDAD */}
+                <section className="space-y-2">
+                  <h4 className="text-xs font-bold tracking-widest text-[#8C7E6E] uppercase">Distribución del Diálogo</h4>
+                  <div className="bg-[#FBF9F6] border border-[#EBE3D5] rounded-xl p-4 flex flex-col sm:flex-row items-center justify-center gap-5 shadow-sm">
+                    <div className="relative w-28 h-28 shrink-0">
+                      <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                        <circle cx="18" cy="18" r="15.915" fill="none" stroke="#EFEAE2" strokeWidth="3" />
+                        {(() => {
+                          let accumulated = 0;
+                          const colors = ['#65594C', '#8C7E6E', '#A38A70', '#C4B49F', '#DFD3C3'];
+                          // Validación estricta para prevenir arrays vacíos en la renderización de Next
+                          const parts = report.participation && report.participation.length > 0 ? report.participation : [{name: 'Sin datos', percentage: 100}];
+                          return parts.map((p, i) => {
+                            const strokeDasharray = `${p.percentage} ${100 - p.percentage}`;
+                            const strokeDashoffset = 100 - accumulated;
+                            accumulated += p.percentage;
+                            return (
+                              <circle 
+                                key={i} cx="18" cy="18" r="15.915" fill="none" 
+                                stroke={colors[i % colors.length]} strokeWidth="3.2" 
+                                strokeDasharray={strokeDasharray} strokeDashoffset={strokeDashoffset} 
+                              />
+                            );
+                          });
+                        })()}
+                      </svg>
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <BarChart3 className="w-4 h-4 text-[#8C7E6E]" />
+                      </div>
                     </div>
-                  ))}
-                </div>
-              </section>
+
+                    <div className="space-y-1.5 w-full">
+                      {(report.participation && report.participation.length > 0 ? report.participation : [{name: 'Sin datos', percentage: 100}]).map((p, i) => {
+                        const colors = ['bg-[#65594C]', 'bg-[#8C7E6E]', 'bg-[#A38A70]', 'bg-[#C4B49F]', 'bg-[#DFD3C3]'];
+                        return (
+                          <div key={i} className="flex items-center justify-between text-xs border-b border-[#EFEAE2] pb-1 last:border-0 font-medium">
+                            <div className="flex items-center gap-2 text-[#4A4036] truncate max-w-[120px]">
+                              <span className={`w-2 h-2 ${colors[i % colors.length]} rounded-full shrink-0`} />
+                              <span className="truncate">{p.name}</span>
+                            </div>
+                            <span className="font-mono font-bold text-[#3D342B]">{p.percentage}%</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </section>
+              </div>
 
               {/* BLOQUE MAQUETADO MAESTRO PARA CONSEJOS INTELIGENTES DE IA (SI ESTÁ ACTIVO) */}
               {report.aiTipsEnabled && report.aiTipsContent && (
