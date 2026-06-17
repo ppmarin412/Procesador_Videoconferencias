@@ -1,104 +1,85 @@
-import { createOpenAI } from '@ai-sdk/openai';
-import { generateText } from 'ai';
 import { NextResponse } from 'next/server';
-
-const qwenClient = createOpenAI({
-  baseURL: process.env.QWEN_API_URL,
-  apiKey: process.env.QWEN_API_KEY,
-});
 
 export async function POST(req: Request) {
   try {
-    const { 
-      transcript, 
-      meetingName, 
-      date, 
-      summaryType, 
-      includeAiInsights,
-      sourceLanguage,
-      targetLanguage 
-    } = await req.json();
+    const body = await req.json();
+    const { meetingName, date, transcript, summaryType, targetLanguage, includeAiInsights } = body;
 
-// 1. INSTRUCCIONES DE LIMPIEZA MULTILINGÜE INTELIGENTE
-    let systemPrompt = `Eres un asistente ejecutivo de IA de nivel experto y consultor estratégico empresarial.\n`;
-    systemPrompt += `Estás procesando la transcripción de la reunión titulada "${meetingName}" con fecha ${date}.\n`;
-    systemPrompt += `REQUERIMIENTO MULTILINGÜE: La reunión puede ser políglota o multilingüe (contener intervenciones en diferentes idiomas como español, inglés, francés, etc.). Debes detectar automáticamente cada uno de ellos.\n`;
-    systemPrompt += `DEBES traducir, consolidar y generar absolutamente todo el informe, análisis y estadísticas en el idioma de destino solicitado: [${targetLanguage}] y formateado en Markdown limpio.\n\n`;
-    
-    systemPrompt += `=== PROTOCOLO DE LIMPIEZA PREMIUM (PRE-PROCESSING) ===\n`;
-    systemPrompt += `Antes de analizar el texto, realiza una limpieza profunda de la transcripción en cualquiera de los idiomas presentes:\n`;
-    systemPrompt += `- Ignora muletillas, tartamudeos o expresiones de relleno (ej: "ehh", "bueno", "you know", "actually", "vale vale").\n`;
-    systemPrompt += `- Filtra saludos repetitivos, despedidas triviales o interrupciones por problemas técnicos de audio.\n`;
-    systemPrompt += `- Concéntrate exclusivamente en el núcleo informativo, los argumentos de peso, las decisiones y los debates reales.\n\n`;
+    const apiUrl = process.env.QWEN_API_URL;
+    const apiKey = process.env.QWEN_API_KEY;
 
-    systemPrompt += `El usuario ha seleccionado el formato de salida: [${summaryType}]. Cumple estrictamente las siguientes directrices para este formato:\n`;
-
-    switch (summaryType) {
-      case 'Resumen breve':
-        systemPrompt += `- Genera una sinopsis ejecutiva ultra-concisa.\n`;
-        systemPrompt += `- Extrae un máximo de 3 a 4 puntos clave globales en viñetas rápidas.\n`;
-        break;
-      case 'Resumen detallado':
-        systemPrompt += `- Realiza un desglose minucioso, profundo y temático de la reunión.\n`;
-        systemPrompt += `- Detalla los contextos de los problemas planteados y las decisiones tomadas sin omitir datos de valor.\n`;
-        break;
-      case 'Resumen detallado con cita':
-        systemPrompt += `- Realiza un desglose minucioso de la reunión.\n`;
-        systemPrompt += `- DEBES incluir citas textuales clave entrecomilladas indicando qué interlocutor la dijo. Si el idioma de destino es diferente al de origen, traduce la cita fielmente manteniendo el sentido exacto.\n`;
-        break;
-      case 'Resumen y acciones':
-        systemPrompt += `- Proporciona un resumen ejecutivo intermedio.\n`;
-        systemPrompt += `- Crea una sección titulada obligatoriamente '### 📋 Acciones a Acometer' (o su traducción exacta al idioma de destino).\n`;
-        systemPrompt += `- Lista las tareas pendientes detectando y asignando de forma explícita al encargado de cada una usando corchetes, por ejemplo: "[Responsable: Nombre]".\n`;
-        break;
+    if (!apiUrl || !apiKey) {
+      return NextResponse.json({ error: 'Faltan las credenciales de la API en el servidor.' }, { status: 500 });
     }
 
-    if (includeAiInsights) {
-      systemPrompt += `\n\n=== MODIFICADOR ADICIONAL: CONSEJOS INTELIGENTES DE IA ===\n`;
-      systemPrompt += `Al final de tu respuesta, añade una sección independiente titulada '### 💡 Consejos Inteligentes de IA' (o su traducción al idioma de destino).\n`;
-      systemPrompt += `Aporta valor de consultoría externa:\n`;
-      systemPrompt += `1. **Recomendaciones Estratégicas**: Analiza riesgos o mejoras metodológicas sectoriales aplicables a lo hablado.\n`;
-      systemPrompt += `2. **Enlaces de Interés**: Proporciona nombres de recursos oficiales, marcos de trabajo o normativas vigentes en formato [Texto](URL) con URLs lógicas.\n`;
-      systemPrompt += `3. **Noticias Relevantes**: Aporta corrientes o novedades fiables actuales del mercado vinculadas al núcleo temático citando fuentes de alta credibilidad.\n`;
-    }
+    // Configuración del prompt para que devuelva el texto estructurado + las métricas en formato JSON limpio
+    const systemPrompt = `Eres un asistente ejecutivo de alta dirección. 
+Procesa la siguiente transcripción de reunión y genera un informe estructurado elegantemente en idioma: ${targetLanguage}.
+Estructura solicitada: ${summaryType}.
+${includeAiInsights ? 'Incluye un apartado final con análisis estratégico y consejos clave.' : ''}
 
-    // Directiva para el bloque matemático de estadísticas
-    systemPrompt += `\n\nCRÍTICO: Al final de TODO tu texto, debes calcular el porcentaje de participación aproximado de cada interlocutor según el volumen de sus intervenciones en la transcripción. Genera un bloque JSON final encerrado estrictamente entre las etiquetas ---START_STATS--- y ---END_STATS--- con la estructura de este ejemplo:
-    {
-      "duration": "58 min",
-      "speakers": [
-        {"name": "Nombre 1", "percentage": 75, "color": "bg-blue-500"},
-        {"name": "Nombre 2", "percentage": 25, "color": "bg-purple-500"}
-      ]
-    }`;
+IMPORTANTE: Al final de tu respuesta, debes añadir OBLIGATORIAMENTE un bloque JSON exacto con las estadísticas de participación y duración estimada, usando estrictamente este formato de marcas:
+[[STATS_START]]
+{
+  "duration": "15", 
+  "speakers": [
+    {"name": "Nombre1", "percentage": 60},
+    {"name": "Nombre2", "percentage": 40}
+  ]
+}
+[[STATS_END]]
+Analiza el texto bruto para estimar la duración y calcular los porcentajes reales de intervención basándote en lo que habla cada participante de la transcripción.`;
 
-    const { text } = await generateText({
-      model: qwenClient('qwen-2.5-72b-instruct'),
-      system: systemPrompt,
-      messages: [
-        {
-          role: 'user',
-          content: `Aquí tienes la transcripción para limpiar y analizar:\n\n${transcript}`,
-        },
-      ],
+    // Realizamos la llamada a Groq / Qwen
+    const response = await fetch(`${apiUrl}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: 'qwen-2.5-32b', // Asegúrate de que este es el modelo que tienes habilitado en tu cuenta de Groq
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: `Reunión: ${meetingName}\nFecha: ${date}\n\nTranscripción:\n${transcript}` }
+        ],
+        temperature: 0.3
+      })
     });
 
-    const parts = text.split('---START_STATS---');
-    const markdownOutput = parts[0].trim();
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Error de Groq:', errorText);
+      return NextResponse.json({ error: `La IA ha respondido con un error externo.` }, { status: response.status });
+    }
+
+    const data = await response.json();
+    const fullText = data.choices[0].message.content;
+
+    // Extracción limpia de las estadísticas del gráfico
+    let resultText = fullText;
     let stats = { duration: '0 min', speakers: [] };
 
-    if (parts[1]) {
+    if (fullText.includes('[[STATS_START]]') && fullText.includes('[[STATS_END]]')) {
       try {
-        const rawJson = parts[1].split('---END_STATS---')[0].trim();
-        stats = JSON.parse(rawJson);
+        const parts = fullText.split('[[STATS_START]]');
+        resultText = parts[0].trim();
+        const statsPart = parts[1].split('[[STATS_END]]')[0].trim();
+        const parsedStats = JSON.parse(statsPart);
+        
+        stats = {
+          duration: parsedStats.duration ? `${parsedStats.duration}` : '10 min',
+          speakers: parsedStats.speakers || []
+        };
       } catch (e) {
-        console.error("Error al parsear estadísticas:", e);
+        console.error('Error al parsear estadísticas de la IA:', e);
       }
     }
 
-    return NextResponse.json({ result: markdownOutput, stats });
+    return NextResponse.json({ result: resultText, stats });
+
   } catch (error) {
-    console.error('Error en el backend:', error);
+    console.error('Error interno:', error);
     return NextResponse.json({ error: 'Error interno de procesamiento.' }, { status: 500 });
   }
 }
