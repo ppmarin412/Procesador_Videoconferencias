@@ -44,7 +44,7 @@ Analiza el texto bruto para estimar la duración y calcular los porcentajes real
         'Authorization': `Bearer ${apiKey.trim()}` // Limpieza de espacios en blanco en la Key
       },
       body: JSON.stringify({
-        model: 'qwen-2.5-coder-32b', // ID Oficial y activo en el catálogo de Groq
+        model: 'llama-3.3-70b-versatile', // ID Oficial y activo en el catálogo de Groq
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: `Reunión: ${meetingName}\nFecha: ${date}\n\nTranscripción:\n${transcript}` }
