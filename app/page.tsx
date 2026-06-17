@@ -33,11 +33,6 @@ export default function Home() {
   const [outputLanguage, setOutputLanguage] = useState('es');
   const [aiTips, setAiTips] = useState(false);
 
-  // Estados del Bot Flotante (Simulación del circuito automático Meet/Teams)
-  const [botState, setBotState] = useState<'idle' | 'capturing' | 'stopped'>('idle');
-  const [capturedLines, setCapturedLines] = useState(0);
-  const [screenshotsCount, setScreenshotsCount] = useState(0);
-
   // Estados de la Aplicación
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -51,30 +46,6 @@ export default function Home() {
       try { setHistory(JSON.parse(saved)); } catch (e) { console.error(e); }
     }
   }, []);
-
-  // Simulación de acciones del Bot 🎙️
-  useEffect(() => {
-    let interval: ReturnType<typeof setInterval>;
-    if (botState === 'capturing') {
-      interval = setInterval(() => {
-        setCapturedLines(prev => prev + Math.floor(Math.random() * 3) + 1);
-      }, 2000);
-    }
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [botState]);
-
-  const handleSendBotData = () => {
-    if (capturedLines === 0) {
-      alert('No se ha capturado texto aún. Asegúrate de activar los subtítulos [CC] en Meet/Teams.');
-      return;
-    }
-    setTitle(`Reunión Automática - ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`);
-    setText(`[Transcripción Automática del Bot de Reunión]\nSe han procesado las líneas capturadas del flujo de subtítulos activos de la videollamada.\nParticipante 1: Analizamos las métricas de distribución y los objetivos del trimestre.\nParticipante 2: Perfecto, hay que subir los documentos de control y revisar las normativas de alérgenos y logística vigentes en este 2026.`);
-    setBotState('idle');
-    alert('¡Datos de la reunión transferidos al formulario con éxito! Listo para procesar.');
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -200,58 +171,6 @@ export default function Home() {
         
         {/* COLUMNA IZQUIERDA: CONFIGURADOR PRINCIPAL */}
         <div className="lg:col-span-2 space-y-8">
-          
-          {/* SECCIÓN 1: PANEL DEL BOT COMPAÑERO INTEGRADO */}
-          <section className="bg-[#EAE3D8] border-2 border-dashed border-[#C4B49F] rounded-2xl p-5 shadow-sm">
-            <div className="flex items-center justify-between border-b border-[#C4B49F] pb-3 mb-4">
-              <div className="flex items-center gap-2">
-                <Radio className={`w-4 h-4 ${botState === 'capturing' ? 'text-red-600 animate-pulse' : 'text-[#65594C]'}`} />
-                <h3 className="text-xs font-bold text-[#5C5043] uppercase tracking-wider">🎙️ Estado del Bot de Reunión (Chrome Extension)</h3>
-              </div>
-              <span className="text-[10px] bg-[#FBF9F6] border border-[#C4B49F] text-[#65594C] px-2 py-0.5 rounded-md font-mono">Requisito: Activar [CC]</span>
-            </div>
-
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div className="flex gap-2">
-                {botState !== 'capturing' ? (
-                  <button 
-                    type="button" onClick={() => { setBotState('capturing'); setError(null); }}
-                    className="flex items-center gap-1.5 bg-red-700 hover:bg-red-800 text-white text-xs font-bold px-3 py-2 rounded-xl transition-colors shadow-sm"
-                  >
-                    <span className="w-2 h-2 bg-white rounded-full animate-ping inline-block" /> 🔴 Iniciar Captura
-                  </button>
-                ) : (
-                  <button 
-                    type="button" onClick={() => setBotState('stopped')}
-                    className="flex items-center gap-1.5 bg-[#4A4036] hover:bg-[#3D342B] text-white text-xs font-bold px-3 py-2 rounded-xl transition-colors shadow-sm"
-                  >
-                    <Square className="w-3 h-3 fill-white" /> ⏹️ Detener Bot
-                  </button>
-                )}
-
-                <button 
-                  type="button" onClick={() => { if(botState==='capturing') setScreenshotsCount(p=>p+1); else alert('Inicia la captura primero'); }}
-                  className="flex items-center gap-1.5 bg-[#FBF9F6] border border-[#C4B49F] text-[#4A4036] hover:bg-[#EFEAE2] text-xs font-medium px-3 py-2 rounded-xl transition-all shadow-sm"
-                >
-                  <Camera className="w-3.5 h-3.5 text-[#8C7E6E]" /> 📸 Capturar Pantalla
-                </button>
-              </div>
-
-              <div className="flex items-center gap-4 text-xs font-medium text-[#5C5043]">
-                <div>Líneas registradas: <span className="font-mono font-bold text-[#3D342B] bg-[#FBF9F6] px-1.5 py-0.5 rounded border border-[#C4B49F]">{capturedLines}</span></div>
-                <div>Capturas: <span className="font-mono font-bold text-[#3D342B] bg-[#FBF9F6] px-1.5 py-0.5 rounded border border-[#C4B49F]">{screenshotsCount}</span></div>
-              </div>
-
-              {botState === 'stopped' && (
-                <button
-                  type="button" onClick={handleSendBotData}
-                  className="w-full sm:w-auto ml-auto flex items-center justify-center gap-1.5 bg-[#A38A70] hover:bg-[#8C755E] text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors shadow-md animate-bounce"
-                >
-                  <Send className="w-3 h-3" /> 🚀 Enviar a mi App
-                </button>
-              )}
-            </div>
-          </section>
 
           {/* SECCIÓN 2: FORMULARIO Y SELECTORES DE EXTRACCIÓN */}
           <section className="bg-[#EFEAE2] rounded-2xl p-6 border border-[#DCD3C5] shadow-sm">
@@ -278,7 +197,7 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* LAS 5 OPCIONES DE RESUMEN SELECCIONABLES RESTAURADAS */}
+              {/* LAS 4 OPCIONES DE RESUMEN SELECCIONABLES RESTAURADAS */}
               <div>
                 <label className="block text-xs font-medium text-[#7C6E5E] mb-2.5">Modalidad de Resumen Solicitada</label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -437,7 +356,7 @@ export default function Home() {
                   </div>
                 </section>
 
-                {/* GRÁFICO DONUT DE PARTICIPACIÓN DE ALTÍSIMA ESTABILIDAD */}
+                {/* GRÁFICO DONUT DE PARTICIPACIÓN */}
                 <section className="space-y-2">
                   <h4 className="text-xs font-bold tracking-widest text-[#8C7E6E] uppercase">Distribución del Diálogo</h4>
                   <div className="bg-[#FBF9F6] border border-[#EBE3D5] rounded-xl p-4 flex flex-col sm:flex-row items-center justify-center gap-5 shadow-sm">
@@ -447,7 +366,6 @@ export default function Home() {
                         {(() => {
                           let accumulated = 0;
                           const colors = ['#65594C', '#8C7E6E', '#A38A70', '#C4B49F', '#DFD3C3'];
-                          // Validación estricta para prevenir arrays vacíos en la renderización de Next
                           const parts = report.participation && report.participation.length > 0 ? report.participation : [{name: 'Sin datos', percentage: 100}];
                           return parts.map((p, i) => {
                             const strokeDasharray = `${p.percentage} ${100 - p.percentage}`;
@@ -486,7 +404,7 @@ export default function Home() {
                 </section>
               </div>
 
-              {/* BLOQUE MAQUETADO MAESTRO PARA CONSEJOS INTELIGENTES DE IA (SI ESTÁ ACTIVO) */}
+              {/* BLOQUE MAQUETADO MAESTRO PARA CONSEJOS INTELIGENTES DE IA */}
               {report.aiTipsEnabled && report.aiTipsContent && (
                 <section className="bg-[#DFD8CD] border border-[#C4B49F] rounded-xl p-5 space-y-4 shadow-inner mt-4 animate-fadeIn">
                   <div className="flex items-center gap-2 border-b border-[#C4B49F] pb-2">
