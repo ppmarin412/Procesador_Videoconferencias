@@ -448,33 +448,64 @@ export default function MeetingForm() {
                 </div>
               )}
 
-              {/* DOCUMENTO FINAL IMPRESO O EN PANTALLA (Estilo Editorial Corporativo) */}
+              {/* DOCUMENTO FINAL IMPRESO O EN PANTALLA (Estilo Editorial Corporativo Altamente Profesional) */}
               <article className="bg-white p-6 md:p-10 rounded-3xl border border-stone-200/50 shadow-sm print:border-none print:p-0 print:shadow-none">
-                {/* Cabecera visible en el PDF exportado (Estilo corporativo estructurado y centrado) */}
-                <div className="hidden print:block border-b-2 border-stone-900 pb-5 mb-6 text-center">
-                  <h1 className="text-3xl font-serif font-bold text-stone-900 uppercase tracking-wide mb-1.5">
-                    {meetingName}
+                {/* Cabecera Estricta y Limpia para el PDF exportado */}
+                <div className="hidden print:block text-center mb-6">
+                  <h1 className="text-3xl font-sans font-bold text-stone-900 uppercase tracking-wide">
+                    REUNIÓN CON {meetingName.toUpperCase()} DE FECHA {date}
                   </h1>
-                  <p className="text-xs uppercase tracking-widest text-stone-500 font-semibold">
-                    Informe Ejecutivo Corporativo — {date}
-                  </p>
+                  <div className="border-b border-stone-900 my-4 w-full"></div>
                 </div>
 
-                {/* Sección Superior de Asistentes para el PDF impreso (Alineación formal antes del resumen) */}
+                {/* Sección de Asistentes: Una fila por asistente sin métricas */}
                 {stats.speakers && stats.speakers.length > 0 && (
-                  <div className="mb-6 pb-4 border-b border-stone-200/60 text-justify">
-                    <span className="text-xs font-bold uppercase tracking-wider text-stone-900 block mb-1">
-                      Asistentes y Participantes:
+                  <div className="mb-6 text-left">
+                    <span className="text-sm font-bold uppercase tracking-wider text-stone-900 block mb-2">
+                      ASISTENTES A LA REUNIÓN:
                     </span>
-                    <p className="text-sm text-stone-600 italic font-light">
-                      {stats.speakers.map(s => s.name).join(', ')}
-                    </p>
+                    <div className="space-y-1 pl-1">
+                      {stats.speakers.map((s, idx) => (
+                        <p key={idx} className="text-sm text-stone-800 font-medium">
+                          • {s.name}
+                        </p>
+                      ))}
+                    </div>
                   </div>
                 )}
                 
-                {/* Cuerpo de texto con excelente interlineado, estructurado por puntos y con Justificado Bilateral */}
-                <div className="prose max-w-none text-stone-800 font-sans text-sm leading-relaxed whitespace-pre-wrap font-light tracking-wide text-justify">
-                  {output}
+                {/* Cuerpo del reporte con formateo avanzado por líneas para títulos en negrita y justificado bilateral */}
+                <div className="prose max-w-none text-stone-900 font-sans text-sm leading-relaxed whitespace-pre-wrap tracking-wide text-justify">
+                  {output.split('\n').map((line, index) => {
+                    const trimmedLine = line.trim();
+                    
+                    // Caso 1: "RESUMEN DETALLADO" en negrita y subrayado
+                    if (trimmedLine.toUpperCase() === 'RESUMEN DETALLADO' || trimmedLine.toUpperCase() === '### RESUMEN DETALLADO') {
+                      return (
+                        <p key={index} className="font-bold underline text-stone-950 my-3 block text-left">
+                          RESUMEN DETALLADO
+                        </p>
+                      );
+                    }
+                    
+                    // Caso 2: Puntos numéricos de la reunión en negrita (ej: "1. Seguimiento..." o "2. Estrategia...")
+                    const numericPrefixRegex = /^\d+\.\s+/;
+                    if (numericPrefixRegex.test(trimmedLine) || trimmedLine.startsWith('###')) {
+                      const cleanText = trimmedLine.replace('###', '').trim();
+                      return (
+                        <p key={index} className="font-bold text-stone-950 mt-4 mb-2 block text-left">
+                          {cleanText}
+                        </p>
+                      );
+                    }
+
+                    // Caso 3: Párrafos normales con justificado bilateral regular
+                    return (
+                      <span key={index} className="block font-light text-stone-800 mb-2">
+                        {line}
+                      </span>
+                    );
+                  })}
                 </div>
               </article>
 
