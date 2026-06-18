@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Document, Packer, Paragraph, TextRun } from 'docx';
+import { Document, Packer, Paragraph, TextRun, AlignmentType } from 'docx';
 
 interface SpeakerStat {
   name: string;
@@ -168,7 +168,7 @@ export default function MeetingForm() {
   const downloadWord = () => {
     const lines = output.split('\n');
     
-    // Generar la lista de participantes como texto legible
+    // Generar la lista de participantes como texto legible para el documento Word
     const participantsText = stats.speakers && stats.speakers.length > 0
       ? stats.speakers.map(s => s.name).join(', ')
       : 'No especificados';
@@ -178,13 +178,13 @@ export default function MeetingForm() {
         return new Paragraph({
           children: [new TextRun({ text: line.replace('###', '').trim(), bold: true, size: 26, font: "Arial" })],
           spacing: { before: 240, after: 120 },
-          alignment: "justify" as any
+          alignment: AlignmentType.JUSTIFY
         });
       }
       return new Paragraph({ 
         children: [new TextRun({ text: line, size: 22, font: "Arial" })], 
         spacing: { after: 140 },
-        alignment: "justify" as any
+        alignment: AlignmentType.JUSTIFY
       });
     });
 
@@ -192,26 +192,26 @@ export default function MeetingForm() {
       sections: [{
         properties: {},
         children: [
-          // Título centrado corporativo
+          // Título principal centrado, en negrita y de gran tamaño formal
           new Paragraph({ 
             children: [new TextRun({ text: meetingName.toUpperCase(), bold: true, size: 36, font: "Arial" })], 
             spacing: { before: 100, after: 100 },
-            alignment: "center" as any
+            alignment: AlignmentType.CENTER
           }),
-          // Fecha centrada
+          // Subtítulo con fecha del informe ejecutado
           new Paragraph({ 
             children: [new TextRun({ text: `FECHA DEL INFORME: ${date}`, size: 20, font: "Arial", color: "555555" })], 
             spacing: { after: 240 },
-            alignment: "center" as any
+            alignment: AlignmentType.CENTER
           }),
-          // Participantes alineados y justificados al frente
+          // Bloque corporativo de Metadatos y Participantes (Sin incluir métricas gráficas)
           new Paragraph({
             children: [
               new TextRun({ text: "ASISTENTES Y PARTICIPANTES:\n", bold: true, size: 22, font: "Arial" }),
               new TextRun({ text: participantsText, italic: true, size: 22, font: "Arial" })
             ],
             spacing: { after: 360 },
-            alignment: "justify" as any
+            alignment: AlignmentType.JUSTIFY
           }),
           ...docParagraphs
         ],
@@ -323,7 +323,7 @@ export default function MeetingForm() {
             </div>
           </div>
 
-          {/* Fila 2: Selectores de Configuración Inteligente (Estilo image_897562.png) */}
+          {/* Fila 2: Selectores de Configuración Inteligente */}
           <div className="p-5 bg-[#FAF8F5] rounded-2xl border border-stone-200/50 print:hidden space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
@@ -431,7 +431,7 @@ export default function MeetingForm() {
                 </div>
               </div>
 
-              {/* ANALÍTICA DE PARTICIPACIÓN - Minimalismo Soft (Estilo image_897562.png) */}
+              {/* ANALÍTICA DE PARTICIPACIÓN - Minimalismo Soft */}
               {stats.speakers && stats.speakers.length > 0 && (
                 <div className="p-6 bg-white rounded-3xl border border-stone-200/70 max-w-sm mx-auto shadow-sm print:hidden">
                   <h3 className="text-[10px] font-bold text-stone-400 text-center mb-4 uppercase tracking-widest">Métricas de Intervención</h3>
@@ -476,7 +476,7 @@ export default function MeetingForm() {
 
               {/* DOCUMENTO FINAL IMPRESO O EN PANTALLA (Estilo Editorial Corporativo) */}
               <article className="bg-white p-6 md:p-10 rounded-3xl border border-stone-200/50 shadow-sm print:border-none print:p-0 print:shadow-none">
-                {/* Cabecera visible en el PDF exportado */}
+                {/* Cabecera visible en el PDF exportado (Estructurado por puntos y Centrado) */}
                 <div className="hidden print:block border-b border-stone-950 pb-5 mb-6 text-center">
                   <h1 className="text-3xl font-serif font-bold text-stone-950 uppercase tracking-wide mb-1">{meetingName}</h1>
                   <p className="text-xs uppercase tracking-widest text-stone-500 font-medium mb-4">Informe Ejecutivo Automatizado — {date}</p>
