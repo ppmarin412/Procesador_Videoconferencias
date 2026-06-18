@@ -168,7 +168,7 @@ export default function MeetingForm() {
   const downloadWord = () => {
     const lines = output.split('\n');
     
-    // Generar la lista de participantes como texto legible para el documento Word
+    // Lista de participantes en texto plano para el encabezado del Word
     const participantsText = stats.speakers && stats.speakers.length > 0
       ? stats.speakers.map(s => s.name).join(', ')
       : 'No especificados';
@@ -192,19 +192,19 @@ export default function MeetingForm() {
       sections: [{
         properties: {},
         children: [
-          // Título principal centrado, en negrita y de gran tamaño formal
+          // Título principal: centrado, más grande y en negrita
           new Paragraph({ 
             children: [new TextRun({ text: meetingName.toUpperCase(), bold: true, size: 36, font: "Arial" })], 
             spacing: { before: 100, after: 100 },
             alignment: AlignmentType.CENTER
           }),
-          // Subtítulo con fecha del informe ejecutado
+          // Subtítulo con fecha
           new Paragraph({ 
             children: [new TextRun({ text: `FECHA DEL INFORME: ${date}`, size: 20, font: "Arial", color: "555555" })], 
             spacing: { after: 240 },
             alignment: AlignmentType.CENTER
           }),
-          // Bloque corporativo de Metadatos y Participantes (Sin incluir métricas gráficas)
+          // Participantes ubicados al inicio del informe (Formato profesional sin gráfico)
           new Paragraph({
             children: [
               new TextRun({ text: "ASISTENTES Y PARTICIPANTES:\n", bold: true, size: 22, font: "Arial" }),
@@ -447,7 +447,6 @@ export default function MeetingForm() {
                   {/* Barras de participación con tonos pastel limpios */}
                   <div className="space-y-3.5">
                     {stats.speakers.map((speaker, index) => {
-                      // Colores suaves basados en la referencia de paleta de la imagen
                       const pastelColors = ["bg-indigo-200/70", "bg-purple-200/70", "bg-rose-200/70", "bg-amber-200/70"];
                       const barColor = pastelColors[index % pastelColors.length];
 
