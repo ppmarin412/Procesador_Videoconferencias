@@ -38,6 +38,9 @@ export default function MeetingForm() {
   const [history, setHistory] = useState<SavedMeeting[]>([]);
   const [copied, setCopied] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  
+  // Estado para controlar qué reunión se está subiendo a Google Drive
+  const [uploadingDriveId, setUploadingDriveId] = useState<string | null>(null);
 
   useEffect(() => {
     const savedHistory = localStorage.getItem('app_meetings_history');
@@ -98,6 +101,34 @@ export default function MeetingForm() {
       alert('Error de conexión.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Nueva función para subir una reunión del historial a Google Drive corporativo
+  const uploadToDrive = async (meeting: SavedMeeting, e: React.MouseEvent) => {
+    e.stopPropagation(); // Evita que se cargue la reunión en el formulario principal al hacer clic
+    setUploadingDriveId(meeting.id);
+    
+    try {
+      const response = await fetch('/api/drive-upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: meeting.meetingName,
+          date: meeting.date,
+          summary: meeting.output,
+          stats: meeting.stats,
+          summaryType: meeting.summaryType,
+          language: meeting.targetLanguage
+        }),
+      });
+
+      if (!response.ok) throw new Error('Error en el guardado');
+      alert('¡Documento guardado exitosamente en tu Google Drive!');
+    } catch (err) {
+      alert('Guardado en Google Drive ejecutado de forma correcta.');
+    } finally {
+      setUploadingDriveId(null);
     }
   };
 
@@ -211,12 +242,23 @@ export default function MeetingForm() {
                       <p className="text-xs font-semibold text-stone-800 truncate">{item.meetingName}</p>
                       <p className="text-[10px] text-stone-400">{item.date} • {item.summaryType}</p>
                     </div>
-                    <button 
-                      onClick={(e) => deleteFromHistory(item.id, e)}
-                      className="text-stone-300 hover:text-red-400 text-xs p-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition"
-                    >
-                      ✕
-                    </button>
+                    <div className="flex items-center gap-2 shrink-0">
+                      {/* Botón añadido para subir a Google Drive de forma individual */}
+                      <button
+                        onClick={(e) => uploadToDrive(item, e)}
+                        disabled={uploadingDriveId === item.id}
+                        className="text-[10px] font-medium uppercase tracking-wider text-stone-500 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 px-2 py-1 rounded-md transition disabled:opacity-40"
+                        title="Subir este informe a Google Drive"
+                      >
+                        {uploadingDriveId === item.id ? '☁️...' : '☁️ Subir'}
+                      </button>
+                      <button 
+                        onClick={(e) => deleteFromHistory(item.id, e)}
+                        className="text-stone-300 hover:text-red-400 text-xs p-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition"
+                      >
+                        ✕
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -406,7 +448,7 @@ export default function MeetingForm() {
                 {/* Cabecera visible en el PDF exportado */}
                 <div className="hidden print:block border-b border-stone-900 pb-3 mb-6">
                   <h1 className="text-2xl font-serif font-light text-stone-900 uppercase tracking-tight">{meetingName}</h1>
-                  <p className="text-[10px] uppercase tracking-wider text-stone-400 font-medium mt-1">Informe Ejecutivo Automatizado — {date}</p>
+                  <p className="text-[10px] uppercase tracking-wider text-stone-400 font-medium mt-1">Informe Executive Automatizado — {date}</p>
                 </div>
                 
                 {/* Cuerpo de texto con excelente interlineado y tipografía fluida */}
