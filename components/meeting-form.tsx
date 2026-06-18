@@ -167,21 +167,16 @@ export default function MeetingForm() {
 
   const downloadWord = () => {
     const lines = output.split('\n');
-    
-    const participantsText = stats.speakers && stats.speakers.length > 0
-      ? stats.speakers.map(s => s.name).join(', ')
-      : 'No especificados';
-
     const docParagraphs = lines.map(line => {
       if (line.startsWith('###')) {
         return new Paragraph({
           children: [new TextRun({ text: line.replace('###', '').trim(), bold: true, size: 26, font: "Arial" })],
-          spacing: { before: 240, after: 120 }
+          spacing: { before: 240, after: 120 },
         });
       }
       return new Paragraph({ 
         children: [new TextRun({ text: line, size: 22, font: "Arial" })], 
-        spacing: { after: 140 }
+        spacing: { after: 140 },
       });
     });
 
@@ -190,19 +185,8 @@ export default function MeetingForm() {
         properties: {},
         children: [
           new Paragraph({ 
-            children: [new TextRun({ text: meetingName.toUpperCase(), bold: true, size: 36, font: "Arial" })], 
-            spacing: { before: 100, after: 100 }
-          }),
-          new Paragraph({ 
-            children: [new TextRun({ text: `FECHA DEL INFORME: ${date}`, size: 20, font: "Arial", color: "555555" })], 
-            spacing: { after: 240 }
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({ text: "ASISTENTES Y PARTICIPANTES:\n", bold: true, size: 22, font: "Arial" }),
-              new TextRun({ text: participantsText, italic: true, size: 22, font: "Arial" })
-            ],
-            spacing: { after: 360 }
+            children: [new TextRun({ text: meetingName.toUpperCase(), bold: true, size: 32, font: "Arial" })], 
+            spacing: { before: 200, after: 200 },
           }),
           ...docParagraphs
         ],
@@ -391,7 +375,7 @@ export default function MeetingForm() {
             {loading ? 'Filtrando ruido y traduciendo...' : 'Procesar y Redactar Documento'}
           </button>
 
-          {/* ====== SECCIÓN DE RESULTADOS SEGUROS ====== */}
+          {/* ====== SECCIÓN DE RESULTADOS ====== */}
           {output && (
             <div className="mt-12 space-y-6 pt-6 border-t border-stone-200/60 print:mt-0 print:border-none print:pt-0">
               
@@ -464,26 +448,16 @@ export default function MeetingForm() {
                 </div>
               )}
 
-              {/* DOCUMENTO FINAL IMPRESO O EN PANTALLA (Estilo Editorial Corporativo) */}
+              {/* DOCUMENTO FINAL IMPRESO O EN PANTALLA (Estilo Editorial) */}
               <article className="bg-white p-6 md:p-10 rounded-3xl border border-stone-200/50 shadow-sm print:border-none print:p-0 print:shadow-none">
-                {/* Cabecera visible en el PDF exportado (Estructurado por puntos y Centrado en CSS) */}
-                <div className="hidden print:block border-b border-stone-950 pb-5 mb-6 text-center">
-                  <h1 className="text-3xl font-serif font-bold text-stone-950 uppercase tracking-wide mb-1">{meetingName}</h1>
-                  <p className="text-xs uppercase tracking-widest text-stone-500 font-medium mb-4">Informe Ejecutivo Automatizado — {date}</p>
+                {/* Cabecera visible en el PDF exportado */}
+                <div className="hidden print:block border-b border-stone-900 pb-3 mb-6">
+                  <h1 className="text-2xl font-serif font-light text-stone-900 uppercase tracking-tight">{meetingName}</h1>
+                  <p className="text-[10px] uppercase tracking-wider text-stone-400 font-medium mt-1">Informe Ejecutivo Automatizado — {date}</p>
                 </div>
-
-                {/* Sección Superior de Asistentes para el PDF impreso (Justificado en CSS con Tailwind) */}
-                {stats.speakers && stats.speakers.length > 0 && (
-                  <div className="mb-6 pb-4 border-b border-stone-100 text-justify">
-                    <span className="text-xs font-bold uppercase tracking-wider text-stone-950 block mb-1">Participantes del encuentro:</span>
-                    <p className="text-sm text-stone-700 italic font-light">
-                      {stats.speakers.map(s => s.name).join(', ')}
-                    </p>
-                  </div>
-                )}
                 
-                {/* Cuerpo de texto con excelente interlineado, tipografía fluida y Justificado Bilateral seguro con Tailwind */}
-                <div className="prose max-w-none text-stone-900 font-sans text-sm leading-relaxed whitespace-pre-wrap font-light tracking-wide text-justify">
+                {/* Cuerpo de texto con excelente interlineado y tipografía fluida */}
+                <div className="prose max-w-none text-stone-800 font-sans text-sm leading-relaxed whitespace-pre-wrap font-light tracking-wide">
                   {output}
                 </div>
               </article>
