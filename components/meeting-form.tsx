@@ -448,16 +448,32 @@ export default function MeetingForm() {
                 </div>
               )}
 
-              {/* DOCUMENTO FINAL IMPRESO O EN PANTALLA (Estilo Editorial) */}
+              {/* DOCUMENTO FINAL IMPRESO O EN PANTALLA (Estilo Editorial Corporativo) */}
               <article className="bg-white p-6 md:p-10 rounded-3xl border border-stone-200/50 shadow-sm print:border-none print:p-0 print:shadow-none">
-                {/* Cabecera visible en el PDF exportado */}
-                <div className="hidden print:block border-b border-stone-900 pb-3 mb-6">
-                  <h1 className="text-2xl font-serif font-light text-stone-900 uppercase tracking-tight">{meetingName}</h1>
-                  <p className="text-[10px] uppercase tracking-wider text-stone-400 font-medium mt-1">Informe Ejecutivo Automatizado — {date}</p>
+                {/* Cabecera visible en el PDF exportado (Estilo corporativo estructurado y centrado) */}
+                <div className="hidden print:block border-b-2 border-stone-900 pb-5 mb-6 text-center">
+                  <h1 className="text-3xl font-serif font-bold text-stone-900 uppercase tracking-wide mb-1.5">
+                    {meetingName}
+                  </h1>
+                  <p className="text-xs uppercase tracking-widest text-stone-500 font-semibold">
+                    Informe Ejecutivo Corporativo — {date}
+                  </p>
                 </div>
+
+                {/* Sección Superior de Asistentes para el PDF impreso (Alineación formal antes del resumen) */}
+                {stats.speakers && stats.speakers.length > 0 && (
+                  <div className="mb-6 pb-4 border-b border-stone-200/60 text-justify">
+                    <span className="text-xs font-bold uppercase tracking-wider text-stone-900 block mb-1">
+                      Asistentes y Participantes:
+                    </span>
+                    <p className="text-sm text-stone-600 italic font-light">
+                      {stats.speakers.map(s => s.name).join(', ')}
+                    </p>
+                  </div>
+                )}
                 
-                {/* Cuerpo de texto con excelente interlineado y tipografía fluida */}
-                <div className="prose max-w-none text-stone-800 font-sans text-sm leading-relaxed whitespace-pre-wrap font-light tracking-wide">
+                {/* Cuerpo de texto con excelente interlineado, estructurado por puntos y con Justificado Bilateral */}
+                <div className="prose max-w-none text-stone-800 font-sans text-sm leading-relaxed whitespace-pre-wrap font-light tracking-wide text-justify">
                   {output}
                 </div>
               </article>
